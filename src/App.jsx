@@ -210,7 +210,7 @@ export default function VelvetOurs() {
       const data = await res.json();
       stopLoading();
 
-      if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error(JSON.stringify(data) || `HTTP ${res.status}`);
 
       const text  = data.content.map(b => b.text || "").join("");
       const clean = text.replace(/```json|```/g, "").trim();
