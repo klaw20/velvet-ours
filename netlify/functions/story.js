@@ -1,21 +1,29 @@
-export const maxDuration = 30;
+exports.handler = async function(event, context) {
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Content-Type": "application/json",
+  };
 
-export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 204, headers, body: "" };
+  }
 
-  if (req.method === "OPTIONS") return res.status(204).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, headers, body: JSON.stringify({ error: "Method not allowed" }) };
+  }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: "API key not configured" });
+  if (!apiKey) {
+    return { statusCode: 500, headers, body: JSON.stringify({ error: "No API key found" }) };
+  }
 
   let body;
   try {
-    body = req.body;
+    body = JSON.parse(event.body);
   } catch {
-    return res.status(400).json({ error: "Invalid request body" });
+    return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid JSON" }) };
   }
 
   const { messages, system } = body;
@@ -37,8 +45,16 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    return res.status(response.ok ? 200 : 502).json(data);
+    return {
+      statusCode: response.ok ? 200 : 502,
+      headers,
+      body: JSON.stringify(data),
+    };
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: err.message }),
+    };
   }
-}
+};
