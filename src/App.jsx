@@ -269,7 +269,7 @@ const [unlocked, setUnlocked] = useState(false);
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          system: buildSystem(profile, 99),
+          system: buildSystem(profile, 99) + `\n\nIMPORTANT: This is the FINAL ENDING chapter. Do NOT repeat what just happened. Pick up AFTER the last chapter and write a brand new satisfying conclusion that resolves all the tension and gives her the moment she deserves. This must feel like a proper ending, not a repeat.`,
           messages: [{ role: "user", content: userMsg }],
         }),
       });
