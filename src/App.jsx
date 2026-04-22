@@ -554,9 +554,28 @@ export default function VelvetOurs() {
                 you already know you need to read it.<br /><br />
                 <em>Continue for $2.99/month. Cancel anytime.</em>
               </p>
-              <button style={S.paywallBtn} onClick={() => alert("Stripe coming soon! 🔥")}>
-                Unlock the Story
-              </button>
+              <button style={S.paywallBtn} onClick={async () => {
+  try {
+    const res = await fetch("/.netlify/functions/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        successUrl: window.location.origin + "?unlocked=true",
+        cancelUrl: window.location.origin,
+      }),
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert("Something went wrong. Please try again.");
+    }
+  } catch (err) {
+    alert("Something went wrong. Please try again.");
+  }
+}}>
+  Unlock the Story
+</button>
               <button style={{ ...S.endingBtn, marginTop: 8 }} onClick={handleRestart}>
                 Start a new story instead
               </button>
