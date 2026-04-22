@@ -48,7 +48,7 @@ const CHOICE_STYLES = {
   dark:  { label: "Walk Away", color: "#888",    hint: "Some wounds are chosen." },
 };
 
-const FREE_CHAPTERS = 2; // Chapters 1-2 free, paywall after
+const FREE_CHAPTERS = 4; // Chapters 1-4 free, paywall after
 
 // ── Storage helpers ───────────────────────────────────────────────────────────
 
@@ -552,7 +552,7 @@ export default function VelvetOurs() {
               <p style={S.paywallSub}>
                 Chapter {chapterNum} is waiting — and after what just happened,<br />
                 you already know you need to read it.<br /><br />
-                <em>Continue for $7.99/month. Cancel anytime.</em>
+                <em>Continue for $2.99/month. Cancel anytime.</em>
               </p>
               <button style={S.paywallBtn} onClick={() => alert("Stripe coming soon! 🔥")}>
                 Unlock the Story
