@@ -139,7 +139,8 @@ export default function VelvetOurs() {
   const [error,          setError]          = useState("");
   const [loadingMsg,     setLoadingMsg]     = useState(LOADING_MSGS[0]);
   const [showPaywall,    setShowPaywall]    = useState(false);
-  const [returning,      setReturning]      = useState(false);
+  const [returning, setReturning] = useState(false);
+const [unlocked, setUnlocked] = useState(false);
 
   const typingRef  = useRef(null);
   const loadingRef = useRef(null);
@@ -147,6 +148,14 @@ export default function VelvetOurs() {
 
   // Load saved progress on mount
   useEffect(() => {
+    // Check if returning from Stripe payment
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("unlocked") === "true") {
+      setUnlocked(true);
+      setShowPaywall(false);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+
     const saved = loadProgress();
     if (saved?.profile && saved?.chapterNum > 1) {
       setReturning(true);
@@ -156,7 +165,7 @@ export default function VelvetOurs() {
       setChoiceHistory(saved.choiceHistory || []);
     }
   }, []);
-
+  
   useEffect(() => {
     if (screen === "loading") {
       let i = 0;
@@ -174,7 +183,7 @@ export default function VelvetOurs() {
   }
 
   async function generateChapter(choiceMade = null) {
-    if (chapterNum > FREE_CHAPTERS) {
+    if (chapterNum > FREE_CHAPTERS && !unlocked) {
       setShowPaywall(true);
       return;
     }
